@@ -10,62 +10,43 @@ You can modify the input array in-place.
 
 
 def missing_pos_int(input_list: list) -> int:
-    lower_bound = -1
-    upper_bound = -1
-    num_loop_passes =0
-    lowest_num_seen = 'a'
-    # print(f"start list = {input_list}")
-    for num in input_list:
-        num_loop_passes += 1
+    highest = 0
+    lowest = input_list[0]
+    poss_gap = 0
+    prev_num = input_list[0]
+    for i in input_list:
 
-        if num <= 0:
+        # curr low checked against absolute value of list item so negative numbers do not affect it.
+        if i < 0:
             continue
-
-        elif num > lower_bound and num > upper_bound:
-            old_upper_bound = upper_bound
-            upper_bound = num
-            if lower_bound == -1:
-                lower_bound = num
-            elif upper_bound - old_upper_bound > 0:
-                lower_bound = old_upper_bound
-        elif num < lower_bound and num < upper_bound:
-            old_lower_bound = lower_bound
-            lower_bound = num
-            if upper_bound == -1:
-                upper_bound = num
-            elif old_lower_bound - lower_bound > 1:
-                upper_bound = old_lower_bound
-        elif num > lower_bound and num < upper_bound:
-            lower_bound = num
-        if lowest_num_seen == 'a' or lowest_num_seen >= num:
-            lowest_num_seen = num
-        # print(f"loop bounds: {lower_bound}, {upper_bound}")
-
-
-    bounds_diff = upper_bound - lower_bound
-    # print(f"lower bound = {lower_bound} , upper bound = {upper_bound} and lowest num seen = {lowest_num_seen}")
-    if bounds_diff > 1:
-        return lower_bound + 1
-    elif lowest_num_seen > 1:
-        ret_val = lowest_num_seen - 1
-        return ret_val
+        if i == poss_gap:
+            poss_gap = 0
+        if i - prev_num > 1 or prev_num - i > 1 and i > 0:
+            poss_gap = min(i, prev_num) + 1
+        lowest = min(abs(lowest), abs(i))
+        highest = max(i, highest)
+        prev_num = i
+    if poss_gap > 0:
+        return poss_gap
+    if lowest <= 0 and highest == 0:
+        return 1
+    if lowest > 1:
+        return lowest - 1
     else:
-        ret_val = upper_bound + 1
-        return ret_val
-
-
-    return 0
+        return highest +1
 
 
 def main():
-
-    input_list = [3, 4, -1, 1]  #2
+    input_list = [-120, 100, 0, 101, 102, 103]  # 1
     print("the lowest positive missing int from {} is {}".format(input_list, str(missing_pos_int(input_list))))
 
-    input_list = [1, 2, 0] #3
+    input_list = [3, 4, -1, 1]
     print("the lowest positive missing int from {} is {}".format(input_list, str(missing_pos_int(input_list))))
 
-    input_list = [1,2,3] #4
+    input_list = [1, 2, 0]  # 3
+    print("the lowest positive missing int from {} is {}".format(input_list, str(missing_pos_int(input_list))))
+
+    input_list = [1, 2, 3]  # 4
     print("the lowest positive missing int from {} is {}".format(input_list, str(missing_pos_int(input_list))))
 
     input_list = [4,5,6,7,10] #1
@@ -73,6 +54,7 @@ def main():
 
     input_list = [-1,-12,1,4] #3
     print("the lowest positive missing int from {} is {}".format(input_list, str(missing_pos_int(input_list))))
+
 
 if __name__ == "__main__":
     main()
